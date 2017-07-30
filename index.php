@@ -85,14 +85,23 @@
                             <small class="form-text text-muted"></small>
                         </div>
                         <div class="form-group">
-                            <label>Nonce</label>
-                            <input class="form-control" type="text" name="nonce" value="123456">
-                            <small class="form-text text-muted"></small>
-                        </div>
-                        <div class="form-group">
                             <label>Client ID</label>
                             <input class="form-control" type="text" name="client_id" value="422119840927-662evl0vdf08n3cfhrtgjvpgic4ntnpo.apps.googleusercontent.com" readonly>
                             <small class="form-text text-muted"></small>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6">
+                                    <label>Nonce</label>
+                                    <input class="form-control" type="text" name="nonce" value="123456">
+                                    <small class="form-text text-muted"></small>
+                                </div>
+                                <div class="col-xs-12 col-sm-6">
+                                    <label>State</label>
+                                    <input class="form-control" type="text" name="state" value="abcdef">
+                                    <small class="form-text text-muted"></small>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <div class="row">
