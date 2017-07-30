@@ -11,21 +11,20 @@ use phpseclib\Crypt\RSA;
 use phpseclib\Math\BigInteger;
 
 // response var
-$response = array();
+$response = array("err" => 1, "msg" => "Unknown error");
 
+// main logic
 $id_token = "";
 if (isset($_GET["token"])) {
     $id_token = $_GET["token"];
+
+    if (verifyJwt($id_token)) {
+        $response['msg'] = "Validation successfull (RSA PKCS#1 signature with SHA-256)";
+        $response['err'] = 0;
+    }
+    else {$response['msg'] = "Signature validation failed";}
 }
-
-if (!empty($id_token)) {
-    if (verifyJwt($response, $id_token)) {
-        $response['err'] = 0; }
-    else {
-        $response['err'] = 1;}
-} else {
-    $response['err'] = 1;}
-
+else {$response['msg'] = "No token given";}
 
 // return results
 echo json_encode($response);
@@ -35,14 +34,16 @@ echo json_encode($response);
  * @param $id_token
  * @return bool
  */
-function verifyJwt(&$response, $id_token) {
+function verifyJwt($id_token) {
     try{
         $token = (new Parser())->parse((string) $id_token);     // Parses from a string
         $headers = $token->getHeaders();                        // Retrieves the token header
 
-        $pubKey = fetchPublicCerts($response, $headers['kid']);
+        // fetch certs from google
+        $pubKey = fetchPublicCerts($headers['kid']);
 
-        // return
+        // add to return var
+        global $response;
         $response['header']  = json_encode($headers,             JSON_PRETTY_PRINT);
         $response['claims']  = json_encode($token->getClaims(),  JSON_PRETTY_PRINT);
         $response['payload'] = $token->getPayload();
@@ -64,11 +65,12 @@ function verifyJwt(&$response, $id_token) {
  * @param $kid
  * @return bool|null|string
  */
-function fetchPublicCerts(&$response, $kid) {
+function fetchPublicCerts($kid) {
     $json = file_get_contents('https://www.googleapis.com/oauth2/v3/certs');
 
-    // return
-    $response['certs']  = $json;
+    // add to return var
+    global $response;
+    $response['certs'] = $json;
 
     $obj = json_decode($json);
     foreach  ($obj->keys as $key) {

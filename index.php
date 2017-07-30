@@ -167,8 +167,9 @@
 
                         // format alert box
                         document.getElementById("result-alert").classList.remove("hidden-xs-up");
-                        document.getElementById("result-alert-class").className = (json.err)? "alert alert-danger" : "alert alert-success";
-                        document.getElementById("result-alert-class").innerHTML = (json.err)? "Could not validate token" : "Validation successfull (RSA PKCS#1 signature with SHA-256)";
+                        document.getElementById("result-alert-class").className = (json.err)?
+                            "alert alert-danger" : "alert alert-success";
+                        document.getElementById("result-alert-class").innerHTML = json.msg;
                     }
                 };
                 xhttp.open("GET", url, true);
