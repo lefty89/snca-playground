@@ -5,6 +5,7 @@ include('vendor/autoload.php');
  * Includes
  */
 use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Parsing\Decoder;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use phpseclib\Crypt\RSA;
 use phpseclib\Math\BigInteger;
@@ -74,8 +75,10 @@ function fetchPublicCerts(&$response, $kid) {
         if ($key->kid == $kid) {
 
             $rsa = new RSA();
-            $modulus  = new BigInteger(base64_url_decode($key->n), 256);
-            $exponent = new BigInteger(base64_url_decode($key->e), 256);
+            $dec = new Decoder();
+
+            $modulus  = new BigInteger($dec->base64UrlDecode($key->n), 256);
+            $exponent = new BigInteger($dec->base64UrlDecode($key->e), 256);
 
             $rsa->loadKey(array('n' => $modulus, 'e' => $exponent));
             // https://tls.mbed.org/kb/cryptography/asn1-key-structures-in-der-and-pem
@@ -83,15 +86,6 @@ function fetchPublicCerts(&$response, $kid) {
         }
     }
     return null;
-}
-
-/**
- * URL+Base64 decoder
- * @param $input
- * @return string
- */
-function base64_url_decode($input) {
-    return base64_decode( strtr( $input, '-_', '+/' ) );
 }
 
 /**
